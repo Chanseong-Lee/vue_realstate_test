@@ -15,31 +15,41 @@
   <div>
     <h4>{{ products[0] }}</h4>
     <p>{{ prices[0] }}만원</p>
-    <!-- onClick속성은 v-on:click이고 축약하면 @click -->
-    <button @click="report_num++">허위매물신고버튼</button> <span>신고수 : {{ report_num }}</span>
+    <button @click="increase(0)">허위매물신고</button> 
+    <span>신고수 : {{ report_num[0] }}</span> <!-- onClick속성은 v-on:click이고 축약하면 @click -->
   </div>
   <div>
     <h4>{{ products[1] }}</h4>
     <p>{{ prices[1] }}만원</p>
+    <button @click="increase(1)">허위매물신고</button> 
+    <span>신고수 : {{ report_num[1] }}</span>
   </div>
   <div>
     <h4>{{ products[2] }}</h4>
     <p>{{ prices[2] }}만원</p>
+    <button @click="increase(2)">허위매물신고</button> 
+    <span>신고수 : {{ report_num[2] }}</span>
   </div>
 </template>
 
 <script>
 export default {
   name: 'App',
-  data(){
+  data() {
     return {
       //{{데이터 바인딩}}을 위한 데이터 보관 : 실시간 자동 렌더링을 쓰려면 이런식으로 관리
       // 자주 변경될 데이터를 주로 보관
-      styleBinding : 'color : blue',
+      styleBinding: 'color : blue',
       menus: ["Home", "Shop", "About"],
-      products : ["역삼동원룸", "천호동원룸", "마포구원룸"],
-      prices : [60, 70, 80],
-      report_num: 0,
+      products: ["역삼동원룸", "천호동원룸", "마포구원룸"],
+      prices: [60, 70, 80],
+      report_num: [0, 0, 0],
+    }
+  },
+  methods: {
+    increase(i) {
+      //report_num은 현재 블록에 정의가 안되있기때문에 data()의 report_num을 가져오기위해 this키워드를 사용. this는 상위 오브젝트를 의미
+      this.report_num[i]++;
     }
   },
   components: {
