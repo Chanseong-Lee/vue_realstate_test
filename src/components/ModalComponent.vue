@@ -27,9 +27,15 @@ export default {
         // 사용자가 month를 숫자가 아닌타입의 자료를 넣으면 alert을 띄운다.
         
         const regex = /^[0-9]+$/g; //숫자 정규 표현식
-        if(!regex.test(newParam)){
-          alert("숫자만 입력하실 수 있습니다.");
-          this.month = oldParam;
+        if(newParam.length > 0){
+          if(!regex.test(newParam)){
+            alert("숫자만 입력하실 수 있습니다.");
+            this.month = oldParam;
+          }
+          // else if(newParam == 2){
+          //   alert("2개월은 안팔아요")
+          //   this.month = oldParam;
+          // }
         }
         // if(isNaN(newParam)){ //숫자면 false, 숫자가 아니면 true
         //   alert("숫자만 입력하실 수 있습니다.")
@@ -47,6 +53,12 @@ export default {
       send(){
         this.$emit("closeModal")
       },
+    },
+    beforeUpdate(){
+      if(this.month == 2){
+        alert("2개월은 안팔아요")
+        this.month = '';
+      }
     },
 }
 </script>

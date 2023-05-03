@@ -3,6 +3,19 @@
   1. UI의 현재상태를 데이터로 저장해둠 (상태 = state / data(){} 이부분을 state라고 부름)
   2. 데이터에 따라 ui가 어떻게 보일지 작성
 -->
+
+<!-- 
+*** 라이프 사이클 ***
+<Component>들은 웹페이지에 표시되기까지 일련의 step을 거침
+  그 step을 LifeCycle이라고 함
+  create 단계     : 데이터만 존재하는 단계
+  mount 단계      : <template> 사이에 있던걸 실제 html로 바꿔줌
+  component 생성  : 그 다음에 index.html에 장착함
+  update 단계     : component안의 data가 변하면 html이 재렌더링됨(사실은 컴포넌트가 재렌더링되는것임)
+  unmount 단계    : component가 삭제됨
+각각의 step 사이에 hook을 걸수있다. -> lifecycle hook
+beforeCreate, created, beforeMount, mounted, beforeUpdate, updated, beforeUnmount, unmounted 등등
+-->
 <template>
   <!-- <div v-if="1 == 2">1 == 1</div>
   <div v-else-if="2==2">2==2</div>
@@ -23,7 +36,7 @@
   </div>
 
   <!-- 컴포넌트 호출-->
-  <DiscountComponent/>
+  <DiscountComponent @decreaseRate="discountRate -= 1;" v-if="showDiscount === true" :discountRate="discountRate" />
 
   <!-- 상품 정렬기능 : 데이터 원본은 보존-->
   <button @click="priceSortAsc">가격순 오름차순 정렬</button>
@@ -53,9 +66,11 @@ export default {
       // 자주 변경될 데이터를 주로 보관
       menus: ["Home", "Shop", "About"],
       is_modal_opened: false, //modal control
+      showDiscount : true,
       rooms : data, //json array
       roomsOriginal : [...data], // 원본 깊은복사
       clickedRoomIdx : 0,
+      discountRate : 30,
     }
   },
   methods: {
@@ -81,8 +96,15 @@ export default {
       })
     },
     sortBack(){
-      this.rooms = [...this.roomsOriginal]; //원본을 깊은 복사로 대입해야한다.(그냥 대입하면 주소값을 공유하기때문에 몇번 누르면 객체가 같아지기때문)
+      //원본을 깊은 복사로 대입해야한다.(그냥 대입하면 주소값을 공유하기때문에 몇번 누르면 객체가 같아지기때문)
+      this.rooms = [...this.roomsOriginal]; 
     },
+  },
+  created(){ // ajax함수는 created나 mounted에서 작성한다.(created : html 생성전 데이터만 존재할때, mounted : html생성 후)
+
+  },
+  mounted(){ // lifecycle hook, App.vue가 마운트 되고 나서 실행됨
+    
   },
   components: {
     DiscountComponent: DiscountComponent,
