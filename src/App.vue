@@ -7,7 +7,7 @@
   <!-- <div v-if="1 == 2">1 == 1</div>
   <div v-else-if="2==2">2==2</div>
   <div v-else>else</div> -->
-  <ModalComponent/>
+  <ModalComponent @closeModal="is_modal_opened = false;" :rooms="rooms" :clickedRoomIdx="clickedRoomIdx" :is_modal_opened="is_modal_opened"/> <!-- v-bind: or : -->
   <div class="menu">
     <!-- <a v-for="변수명 in 반복할 숫자" :key="변수명">Home</a> -->
     <!-- <a v-for="변수명 in 배열" :key="변수명">{{ 변수명 }}</a> -->
@@ -20,19 +20,21 @@
 
   <!-- 컴포넌트 호출-->
   <DiscountComponent/>
-
-  <div v-for="(room, i) in rooms" :key="i">
-    <img :src="room.image" class="room-img">
-    <h4 @click="open_modal(i)"> {{ room.title }}</h4>
-    <p>{{ room.price }}원</p>
-  </div>
-  
+  <!-- 방 리스트 -->
+  <!-- 자식에서 $emit()으로 받은 메시지를 @변수명으로 받을 수 있다. $event는 자식에서 보낸 데이터를 받을 수 있다. -->
+  <CardComponent @openModal="is_modal_opened = true; clickedRoomIdx = $event;" :room="rooms[i]" v-for="(room, i) in rooms" :key="room"/>
+  <!-- <div v-for="(room, i) in rooms" :key="i">
+        <img :src="room.image" class="room-img">
+        <h4 @click="open_modal(i)"> {{ room.title }}</h4>
+        <p>{{ room.price }}원</p>
+  </div> -->
 </template>
 
 <script>
 import data from './data/post.js' //DB없이 해당경로에 json배열로 데이터 준비하고 import
 import DiscountComponent from './components/DiscountComponent.vue'; //component import
 import ModalComponent from './components/ModalComponent.vue'; //component import
+import CardComponent from './components/CardComponent.vue';
 
 export default {
   name: 'App',
@@ -41,7 +43,7 @@ export default {
       //{{데이터 바인딩}}을 위한 데이터 보관 : 실시간 자동 렌더링을 쓰려면 이런식으로 관리
       // 자주 변경될 데이터를 주로 보관
       menus: ["Home", "Shop", "About"],
-      is_modal_opend: false, //modal control
+      is_modal_opened: false, //modal control
       rooms : data, //json array
       clickedRoomIdx : 0,
     }
@@ -52,16 +54,17 @@ export default {
       this.report_num[i]++;
     },
     open_modal(i){
-      this.is_modal_opend = true;
+      this.is_modal_opened = true;
       this.clickedRoomIdx = i;
     },
     close_modal (){
-      this.is_modal_opend = false;
+      this.is_modal_opened = false;
     }
   },
   components: {
-    DiscountComponent: DiscountComponent, //import한 컴포넌트를 등록
+    DiscountComponent: DiscountComponent,
     ModalComponent: ModalComponent,
+    CardComponent: CardComponent,
 }
 }
 </script>
