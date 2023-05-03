@@ -7,7 +7,11 @@
   <!-- <div v-if="1 == 2">1 == 1</div>
   <div v-else-if="2==2">2==2</div>
   <div v-else>else</div> -->
-  <ModalComponent @closeModal="is_modal_opened = false;" :rooms="rooms" :clickedRoomIdx="clickedRoomIdx" :is_modal_opened="is_modal_opened"/> <!-- v-bind: or : -->
+  <!-- CSS 애니메이션 주기 : 1.시작전 class명 2.애니메이션이 끝난 후 class명 3.그리고 원할 때 2번 class명 부착 -->
+  <!-- <div class="start" :class="{end : is_modal_opened}"> :class에 object형태로 바인딩 가능(조건부로 class명을 넣을 수 있음) -->
+  <Transition name="fade"> <!-- transition을 위한 vue태그-->
+    <ModalComponent @closeModal="is_modal_opened = false;" :rooms="rooms" :clickedRoomIdx="clickedRoomIdx" :is_modal_opened="is_modal_opened"/> <!-- v-bind: or : -->
+  </Transition>
   <div class="menu">
     <!-- <a v-for="변수명 in 반복할 숫자" :key="변수명">Home</a> -->
     <!-- <a v-for="변수명 in 배열" :key="변수명">{{ 변수명 }}</a> -->
@@ -20,6 +24,11 @@
 
   <!-- 컴포넌트 호출-->
   <DiscountComponent/>
+
+  <!-- 상품 정렬기능 : 데이터 원본은 보존-->
+  <button @click="priceSortAsc">가격순 오름차순 정렬</button>
+  <button @click="priceSortDesc">가격순 내림차순 정렬</button>
+  <button @click="sortBack">되돌리기</button>
   <!-- 방 리스트 -->
   <!-- 자식에서 $emit()으로 받은 메시지를 @변수명으로 받을 수 있다. $event는 자식에서 보낸 데이터를 받을 수 있다. -->
   <CardComponent @openModal="is_modal_opened = true; clickedRoomIdx = $event;" :room="rooms[i]" v-for="(room, i) in rooms" :key="room"/>
@@ -45,6 +54,7 @@ export default {
       menus: ["Home", "Shop", "About"],
       is_modal_opened: false, //modal control
       rooms : data, //json array
+      roomsOriginal : [...data], // 원본 깊은복사
       clickedRoomIdx : 0,
     }
   },
@@ -59,7 +69,20 @@ export default {
     },
     close_modal (){
       this.is_modal_opened = false;
-    }
+    },
+    priceSortAsc(){
+      this.rooms.sort(function(a, b){
+        return a.price - b.price; // 음수면 왼쪽으로 보내주셈
+      })
+    },
+    priceSortDesc(){
+      this.rooms.sort(function(a, b){ //sort는 원본배열을 변형시킨다.
+        return b.price - a.price; // 음수면 왼쪽으로 보내주셈
+      })
+    },
+    sortBack(){
+      this.rooms = [...this.roomsOriginal]; //원본을 깊은 복사로 대입해야한다.(그냥 대입하면 주소값을 공유하기때문에 몇번 누르면 객체가 같아지기때문)
+    },
   },
   components: {
     DiscountComponent: DiscountComponent,
@@ -70,6 +93,7 @@ export default {
 </script>
 
 <style>
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -83,6 +107,42 @@ body{
 div{
   box-sizing: border-box;
 }
+/* start class의 모든 속성:all 이 변할때 1초가 걸림*/
+/* .start {
+  opacity: 0;
+  transition: all 1s; 
+}
+.end {
+  opacity: 1;
+} */
+
+/* Transition tag를 사용할 경우 : [name속성]-enter-from... */
+.fade-enter-from {
+  /* 시작스타일 */
+  /* opacity: 0; */
+  transform: translateY(-1000px);
+}
+.fade-enter-active {
+  /* transition 동작방식 */
+  transition: all 1s; 
+}
+.fade-enter-to {
+  /* 끝스타일 */
+  /* opacity: 1; */
+  transform: translateY(0px);
+}
+
+.fade-leave-from {
+  opacity: 1; /* 시작스타일 */
+}
+.fade-leave-active {
+  transition: all 1s; /* transition 동작방식 */
+}
+.fade-leave-to {
+  opacity: 0; /* 끝스타일 */
+}
+
+
 .menu {
   background: darkslateblue;
   padding: 15px;
@@ -121,5 +181,8 @@ div{
   padding: 10px;
   margin: 10px;
   border-radius: 5px;
+}
+div > h4:hover {
+  cursor: pointer;
 }
 </style>

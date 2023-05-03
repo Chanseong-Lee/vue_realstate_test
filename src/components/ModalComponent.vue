@@ -8,7 +8,7 @@
       <!-- 이벤트리스너를 불러올때 $event로 불러옴, target은 현재 이벤트가 발생한곳 -->
       <!-- <input @input="month = $event.target.value">  -->
       <input v-model="month"> <!-- 위 주석의 축약버전 -->
-      
+
       <p> {{ month }}개월 선택함 : {{rooms[clickedRoomIdx].price * month}}원</p>
       <button @click="send">닫기</button>
     </div>
@@ -20,6 +20,21 @@ export default {
     data(){
       return {
         month: 1, //초기값의 자료형이 중요함 하지만 input은 저장은 넘버여도 문자로 저장됨
+      }
+    },
+    watch : { //데이터를 감시하는 함수들의 집합
+      month(newParam, oldParam){  //watch함수명을 data()에 정의된 변수명과 일치시킴, month의 값이 변경될 때 마다 실행됨
+        // 사용자가 month를 숫자가 아닌타입의 자료를 넣으면 alert을 띄운다.
+        
+        const regex = /^[0-9]+$/g; //숫자 정규 표현식
+        if(!regex.test(newParam)){
+          alert("숫자만 입력하실 수 있습니다.");
+          this.month = oldParam;
+        }
+        // if(isNaN(newParam)){ //숫자면 false, 숫자가 아니면 true
+        //   alert("숫자만 입력하실 수 있습니다.")
+        //   this.month = oldParam;
+        // }
       }
     },
     props : { //App.vue에서 v-bind로 넘겨준 데이터를 props에서 등록
